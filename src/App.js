@@ -1,43 +1,53 @@
 import React, { Component } from "react";
 import { deck, shuffleDeck } from "./helpers/deckHelper.js";
-// import { houseWay } from "./helpers/houseWay.js";
+import { houseWay } from "./helpers/houseWay.js";
 
 class App extends Component {
   state = {
     deck: shuffleDeck(deck),
     handOf4: [],
-    hand: []
+    houseWayHand: []
   };
 
   componentDidMount() {
     let handOf4 = [];
+    const { deck } = this.state;
+    console.log(deck);
     for (let i = 0; i < 4; i++) {
-      let index = Math.floor(Math.random() * 32);
-      const tile = deck.slice(index, 1);
+      let index = Math.floor(Math.random() * deck.length);
+      const tile = this.state.deck.splice(index, 1)[0];
       handOf4.push(tile);
     }
-    this.setState({ handOf4: handOf4 });
+    this.setState({ handOf4: handOf4 }, () => this.setHouseWay());
   }
 
-  houseWay = () => {
-    // const houseWay = houseWay(this.state.hand);
-    // this.setState({ hand: houseWay });
+  setHouseWay = () => {
+    const houseWayAr = houseWay(this.state.handOf4);
+    this.setState({ houseWayHand: houseWayAr });
   };
 
   render() {
     const fourTiles = this.state.handOf4.map((card, index) => {
       return (
-        <div key={index} id="tile-{index}">
+        <div key={index} id={`tile-${index}`}>
           {card.name}
         </div>
       );
     });
+    // const houseWayHand = this.state.houseWayHand.map((card, index) => {
+    //   return (
+    //     <div key={index} id={`tile-${index}`}>
+    //       {card.name}
+    //     </div>
+    //   );
+    // });
     return (
       <React.Fragment>
         <div className="app">
-          <p>The 4 tiles are:</p>
+          <p>Your hand is:</p>
           {fourTiles}
-          <p>The house way is:</p>
+          The house way is:
+          {/* {houseWayHand} */}
         </div>
       </React.Fragment>
     );
