@@ -407,7 +407,7 @@ const deck = [
   },
   {
     id: 30,
-    name: "First Mixed Five",
+    name: "Second Mixed Five",
     description: "3 + 2 Five",
     translation: "Five",
     pair_id: 16,
