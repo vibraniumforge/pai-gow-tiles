@@ -4,7 +4,8 @@ import { houseWay } from "./helpers/houseWay.js";
 
 class App extends Component {
   state = {
-    deck: shuffleDeck(deck),
+    // deck: shuffleDeck(deck),
+    deck: deck,
     handOf4: [],
     houseWayHand: []
   };
@@ -12,10 +13,9 @@ class App extends Component {
   componentDidMount() {
     let handOf4 = [];
     const { deck } = this.state;
-    console.log(deck);
     for (let i = 0; i < 4; i++) {
       let index = Math.floor(Math.random() * deck.length);
-      const tile = this.state.deck.splice(index, 1)[0];
+      const tile = deck.splice(index, 1)[0];
       handOf4.push(tile);
     }
     this.setState({ handOf4: handOf4 }, () => this.setHouseWay());
@@ -44,8 +44,10 @@ class App extends Component {
     return (
       <React.Fragment>
         <div className="app">
+          <br />
           <p>Your hand is:</p>
           {fourTiles}
+          <br />
           The house way is:
           {/* {houseWayHand} */}
         </div>

@@ -5,8 +5,6 @@ const houseWay = hand => {
 
   // check for pairs
 
-  debugger;
-
   const sortedByPairHand = hand.slice().sort((a, b) => b.pairRank - a.pairRank);
   let hasAPair = false;
 
@@ -36,11 +34,11 @@ const houseWay = hand => {
     onePair: for (let i = 0; i < 3; i++) {
       for (let j = i + 1; j < 4; j++) {
         if (sortedByPairHand[i].pair_id === sortedByPairHand[j].pair_id) {
-          console.log(sortedByPairHand[i]);
-          console.log(sortedByPairHand[j]);
-          highHand.push(sortedByPairHand.splice(j, j + 1)[0]);
-          highHand.push(sortedByPairHand.splice(i, i + 1)[0]);
-          console.log(sortedByPairHand);
+          console.log("i=", i);
+          console.log("j=", j);
+          console.log("sortedByPairHand=", sortedByPairHand);
+          highHand.push(sortedByPairHand.splice(j, 1)[0]);
+          highHand.push(sortedByPairHand.splice(i, 1)[0]);
           hasAPair = true;
           break onePair;
         }
@@ -51,13 +49,15 @@ const houseWay = hand => {
         lowHand.push(tile);
       });
     }
-    console.log(sortedByPairHand);
-    console.log(lowHand);
-    console.log(highHand);
+    console.log(hasAPair);
+    console.log("sortedByPairHand=", sortedByPairHand);
+    console.log("lowHand=", lowHand);
+    console.log("highHand=", highHand);
     finalHand.push(lowHand);
     finalHand.push(highHand);
-    console.log(finalHand);
-    return finalHand;
+    console.log("finalHand=", finalHand);
+    // return finalHand;
+    return hasAPair;
   }
 };
 
