@@ -4,12 +4,15 @@ let numFalse = 0;
 function testStuff(num) {
   for (let i = 0; i < num; i++) {
     let handOf4 = [];
+    let newDeck = shuffleDeck(deck).slice();
     for (let j = 0; j < 4; j++) {
-      let newDeck = shuffleDeck(deck).slice();
       let index = Math.floor(Math.random() * newDeck.length);
       const tile = newDeck.splice(index, 1)[0];
       handOf4.push(tile);
     }
+    // handOf4.forEach(tile => {
+    //   console.log(tile.id);
+    // });
     houseWay(handOf4) ? numTrue++ : numFalse++;
   }
   console.log("numFalse=", numFalse);
@@ -20,25 +23,62 @@ function testStuff(num) {
 
 const houseWay = handOf4 => {
   let hasAPair = false;
-
-  for (let i = 0; i < 3; i++) {
-    for (let j = i + 1; j < 4; j++) {
-      if (handOf4[i].pair_id === handOf4[j].pair_id) {
-        // console.log(handOf4[0].pair_id);
-        // console.log(handOf4[1].pair_id);
-        // console.log(handOf4[2].pair_id);
-        // console.log(handOf4[3].pair_id);
-        // console.log(hasAPair);
-        hasAPair = true;
-      }
+  const sortedByPairHand = handOf4
+    .slice()
+    .sort((a, b) => b.pairRank - a.pairRank);
+  let sortedHandResult = {};
+  for (let iterator of sortedByPairHand) {
+    if (sortedHandResult[iterator.pair_id]) {
+      sortedHandResult[iterator.pair_id] += 1;
+    } else {
+      sortedHandResult[iterator.pair_id] = 1;
     }
+  }
+
+  // if pair/pair, push lowest 2 into low, and highest 2 into high and return
+  if (
+    Object.values(sortedHandResult).length === 2 &&
+    Object.values(sortedHandResult)[0] === 2 &&
+    Object.values(sortedHandResult)[1] === 2
+  ) {
+    // lowHand.push(sortedByPairHand[0]);
+    // lowHand.push(sortedByPairHand[1]);
+    // highHand.push(sortedByPairHand[2]);
+    // highHand.push(sortedByPairHand[3]);
+    // finalHand.push(lowHand);
+    // finalHand.push(highHand);
+    console.log("Pair pair");
+    hasAPair = true;
+    return hasAPair;
+    // return finalHand;
+  } else if (
+    Object.values(sortedHandResult).length === 3 &&
+    (Object.values(sortedHandResult)[0] === 2 ||
+      Object.values(sortedHandResult)[1] === 2 ||
+      Object.values(sortedHandResult)[2] === 2)
+  ) {
+    console.log("pair");
+    hasAPair = true;
+    // for (let i = 0; i < 3; i++) {
+    //   for (let j = i + 1; j < 4; j++) {
+    //     if (handOf4[i].pair_id === handOf4[j].pair_id) {
+    //       // console.log(handOf4[0].pair_id);
+    //       // console.log(handOf4[1].pair_id);
+    //       // console.log(handOf4[2].pair_id);
+    //       // console.log(handOf4[3].pair_id);
+    //       // console.log(hasAPair);
+    //       console.log("pair");
+    //       hasAPair = true;
+    //     }
+    //   }
+    // }
   }
   // console.log(handOf4[0].pair_id);
   // console.log(handOf4[1].pair_id);
   // console.log(handOf4[2].pair_id);
   // console.log(handOf4[3].pair_id);
   // console.log(hasAPair);
-  // console.log("+======================");
+  //   console.log("+======================");
   return hasAPair;
 };
 
