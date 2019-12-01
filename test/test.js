@@ -1,33 +1,41 @@
-let numTrue = 0;
-let numFalse = 0;
+// import noPairStrategy from "noPair.js";
+// import onePairStrategy from "onePair.js";
+// import twoPairStrategy from "twoPair.js";
 
 function testStuff(num) {
+  let numTrue = 0;
+  let numFalse = 0;
+
   for (let i = 0; i < num; i++) {
     let handOf4 = [];
     let newDeck = shuffleDeck(deck).slice();
     for (let j = 0; j < 4; j++) {
-      let index = Math.floor(Math.random() * newDeck.length);
+      const index = Math.floor(Math.random() * newDeck.length);
       const tile = newDeck.splice(index, 1)[0];
       handOf4.push(tile);
     }
-    // handOf4.forEach(tile => {
-    //   console.log(tile.id);
-    // });
+    let handOf4 = [deck[0], deck[1], deck[6], deck[10]];
     houseWay(handOf4) ? numTrue++ : numFalse++;
   }
+  console.log("has2Pairs=", has2Pairs);
   console.log("numFalse=", numFalse);
   console.log("numTrue=", numTrue);
   console.log("numTrue / num", numTrue / num);
   return numTrue / num;
 }
 
+let has2Pairs = 0;
 const houseWay = handOf4 => {
+  let highHand = [];
+  let lowHand = [];
+  let finalHand = [];
   let hasAPair = false;
-  const sortedByPairHand = handOf4
+
+  let sortedAscendingHand = handOf4
     .slice()
     .sort((a, b) => b.pairRank - a.pairRank);
   let sortedHandResult = {};
-  for (let iterator of sortedByPairHand) {
+  for (let iterator of sortedAscendingHand) {
     if (sortedHandResult[iterator.pair_id]) {
       sortedHandResult[iterator.pair_id] += 1;
     } else {
@@ -41,16 +49,22 @@ const houseWay = handOf4 => {
     Object.values(sortedHandResult)[0] === 2 &&
     Object.values(sortedHandResult)[1] === 2
   ) {
-    // lowHand.push(sortedByPairHand[0]);
-    // lowHand.push(sortedByPairHand[1]);
-    // highHand.push(sortedByPairHand[2]);
-    // highHand.push(sortedByPairHand[3]);
-    // finalHand.push(lowHand);
-    // finalHand.push(highHand);
+    lowHand.push(sortedAscendingHand[0]);
+    lowHand.push(sortedAscendingHand[1]);
+    highHand.push(sortedAscendingHand[2]);
+    highHand.push(sortedAscendingHand[3]);
+    finalHand.push(lowHand);
+    finalHand.push(highHand);
+    // console.log(finalHand);
+    console.log(finalHand[0][0].name);
+    console.log(finalHand[1][0].name);
     console.log("Pair pair");
     hasAPair = true;
+    has2Pairs++;
     return hasAPair;
     // return finalHand;
+
+    // 1 pair
   } else if (
     Object.values(sortedHandResult).length === 3 &&
     (Object.values(sortedHandResult)[0] === 2 ||
@@ -58,27 +72,46 @@ const houseWay = handOf4 => {
       Object.values(sortedHandResult)[2] === 2)
   ) {
     console.log("pair");
-    hasAPair = true;
-    // for (let i = 0; i < 3; i++) {
-    //   for (let j = i + 1; j < 4; j++) {
-    //     if (handOf4[i].pair_id === handOf4[j].pair_id) {
-    //       // console.log(handOf4[0].pair_id);
-    //       // console.log(handOf4[1].pair_id);
-    //       // console.log(handOf4[2].pair_id);
-    //       // console.log(handOf4[3].pair_id);
-    //       // console.log(hasAPair);
-    //       console.log("pair");
-    //       hasAPair = true;
-    //     }
-    //   }
-    // }
+
+    for (let i = 0; i < 3; i++) {
+      for (let j = i + 1; j < 4; j++) {
+        if (sortedAscendingHand[i].pair_id === sortedAscendingHand[j].pair_id) {
+          console.log("pair");
+          hasAPair = true;
+          pairVaue = sortedHandResult[i].value;
+          if ([4, 5, 6, 10, 11].includes(pairVaue)) {
+            finalHand;
+            sortedHandResult.forEach(tile => {
+              if (tile.value === pairVaue) {
+                highHand.push(tile);
+              } else {
+                lowHand.push(tile);
+              }
+            });
+            return finalHand;
+          } else {
+            console.log("else");
+            switch (pairValue) {
+              case 2:
+                if (
+                  (way1Value[0] >= 6 && way1Value[1] >= 8) ||
+                  (way2Value[0] >= 6 && way2Value[1] >= 8) ||
+                  (way3Value[0] >= 6 && way3Value[1] >= 8)
+                ) {
+                  console.log("hit");
+                }
+            }
+          }
+        }
+      }
+    }
   }
-  // console.log(handOf4[0].pair_id);
-  // console.log(handOf4[1].pair_id);
-  // console.log(handOf4[2].pair_id);
-  // console.log(handOf4[3].pair_id);
-  // console.log(hasAPair);
-  //   console.log("+======================");
+  console.log(handOf4[0].pair_id);
+  console.log(handOf4[1].pair_id);
+  console.log(handOf4[2].pair_id);
+  console.log(handOf4[3].pair_id);
+  console.log(hasAPair);
+  console.log("+======================");
   return hasAPair;
 };
 
@@ -547,4 +580,4 @@ function shuffleDeck(deck) {
 
 // export { deck, shuffleDeck };
 
-testStuff(1000);
+testStuff(1);
