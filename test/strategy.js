@@ -1,33 +1,33 @@
-function testStuff() {
-  //   let handOf4 = [];
-  //   for (let i = 0; i < num; i++) {
-  // let newDeck = shuffleDeck(deck).slice();
-  // for (let j = 0; j < 4; j++) {
-  //   const index = Math.floor(Math.random() * newDeck.length);
-  //   const tile = newDeck.splice(index, 1)[0];
-  //   handOf4.push(tile);
-  // }
-  // }
-  let handOf4 = [deck[0], deck[1], deck[6], deck[10]];
-  //   console.log("has2Pairs=", has2Pairs);
-  //   console.log("numFalse=", numFalse);
-  //   console.log("numTrue=", numTrue);
-  //   console.log("numTrue / num", numTrue / num);
-  //   return numTrue / num;
+function testStuff(num) {
+  let handOf4 = [];
+  for (let i = 0; i < num; i++) {
+    let newDeck = shuffleDeck(deck).slice();
+    for (let j = 0; j < 4; j++) {
+      const index = Math.floor(Math.random() * newDeck.length);
+      const tile = newDeck.splice(index, 1)[0];
+      handOf4.push(tile);
+    }
+  }
+  //   let handOf4 = [deck[0], deck[1], deck[6], deck[10]];
   const result = houseWay(handOf4);
   const reverseResult = [...result].reverse();
-  const pointValue1 = [];
-  result.forEach(hand => {
-    pointValue1.push((hand[0].value + hand[1].value) % 10);
-  });
-  const pointValue2 = pointValue1.slice().sort();
-  console.log(pointValue1);
-  console.log(pointValue2);
-  if (pointValue1[0] === pointValue2[0]) {
-    console.log(result);
+  const pointValue = [];
+  if (result[1][0].pair_id === result[1][1].pair_id) {
+    pointValue.push([(result[0][0].value + result[0][1].value) % 10]);
+    pointValue.push(["pair"]);
+  } else {
+    result.forEach(hand => {
+      pointValue.push((hand[0].value + hand[1].value) % 10);
+    });
+  }
+  const pointValueSorted = pointValue.slice().sort();
+  console.log("pointValue=", pointValue);
+  console.log("pointValueSorted=", pointValueSorted);
+  if (pointValue[0] === pointValueSorted[0]) {
+    console.log(pointValue.join(", "));
     return result;
   } else {
-    console.log(reverseResult);
+    console.log(pointValueSorted.join(", "));
     return reverseResult;
   }
 }
@@ -75,21 +75,22 @@ const houseWay = handOf4 => {
       Object.values(sortedHandResult)[2] === 2)
   ) {
     hasAPair = true;
-    let pairValue = parseInt(
+    let pairId = parseInt(
       Object.keys(sortedHandResult).filter(key => {
         return sortedHandResult[key] === 2;
       })[0],
       10
     );
+    let pairValue = deck.find(tile => tile.pair_id === pairId).value;
     console.log(pairValue);
     const other2Tiles = sortedAscendingHand
       .slice()
-      .filter(tile => tile.value !== pairValue)
+      .filter(tile => tile.pair_id !== pairId)
       .sort();
 
     const pairInThisHand = sortedAscendingHand
       .slice()
-      .filter(tile => tile.value === pairValue)
+      .filter(tile => tile.pair_id === pairId)
       .sort();
 
     if ([4, 5, 6, 10, 11].includes(pairValue)) {
@@ -97,6 +98,7 @@ const houseWay = handOf4 => {
       highHand = [...pairInThisHand];
       finalHand.push(lowHand);
       finalHand.push(highHand);
+      return finalHand;
     }
     let way1 = [
       [sortedAscendingHand[0], sortedAscendingHand[1]],
@@ -127,7 +129,6 @@ const houseWay = handOf4 => {
 
     switch (pairValue) {
       case 2:
-        console.log("switch 2");
         if (way1Value[0] >= 6 && way1Value[1] >= 8) {
           finalHand = [...way1];
           break;
@@ -138,8 +139,12 @@ const houseWay = handOf4 => {
           finalHand = [...way3];
           break;
         } else {
-          console.log("hi");
+          lowHand = [...other2Tiles];
+          highHand = [...pairInThisHand];
+          finalHand.push(lowHand);
+          finalHand.push(highHand);
         }
+        break;
       case 3: {
         if (
           (other2Tiles[0].value === 4 ||
@@ -160,6 +165,7 @@ const houseWay = handOf4 => {
           finalHand.push(lowHand);
           finalHand.push(highHand);
         }
+        break;
       }
       case 7: {
         if (
@@ -229,8 +235,25 @@ const houseWay = handOf4 => {
         return "error";
     }
     return finalHand;
+  } else {
+    console.log("No pair");
+    lowHand.push(sortedAscendingHand[0]);
+    lowHand.push(sortedAscendingHand[1]);
+    highHand.push(sortedAscendingHand[2]);
+    highHand.push(sortedAscendingHand[3]);
+    finalHand.push(lowHand);
+    finalHand.push(highHand);
+    return finalHand;
   }
 };
+
+// const playThePair = () => {
+//   lowHand = [...other2Tiles];
+//   highHand = [...pairInThisHand];
+//   finalHand.push(lowHand);
+//   finalHand.push(highHand);
+//   return finalHand;
+// };
 
 // for (let i = 0; i < 3; i++) {
 //   for (let j = i + 1; j < 4; j++) {
@@ -282,6 +305,7 @@ const deck = [
     description: "",
     pair_id: 2,
     value: 2,
+    points: 12,
     singleRank: 1,
     pairRank: 2,
     special: true,
@@ -296,6 +320,7 @@ const deck = [
     description: "",
     pair_id: 2,
     value: 2,
+    points: 12,
     singleRank: 1,
     pairRank: 2,
     special: true,
@@ -310,6 +335,7 @@ const deck = [
     description: "",
     pair_id: 3,
     value: 2,
+    points: 2,
     singleRank: 2,
     pairRank: 3,
     special: true,
@@ -324,6 +350,7 @@ const deck = [
     description: "",
     pair_id: 3,
     value: 2,
+    points: 2,
     singleRank: 2,
     pairRank: 3,
     special: true,
@@ -338,6 +365,7 @@ const deck = [
     description: "",
     pair_id: 4,
     value: 8,
+    points: 8,
     singleRank: 3,
     pairRank: 4,
     special: false,
@@ -352,6 +380,7 @@ const deck = [
     description: "",
     pair_id: 4,
     value: 8,
+    points: 8,
     singleRank: 3,
     pairRank: 4,
     special: false,
@@ -366,6 +395,8 @@ const deck = [
     description: "",
     pair_id: 5,
     value: 4,
+
+    points: 4,
     singleRank: 4,
     pairRank: 5,
     special: false,
@@ -380,6 +411,7 @@ const deck = [
     description: "",
     pair_id: 5,
     value: 4,
+    points: 4,
     singleRank: 4,
     pairRank: 5,
     special: false,
@@ -394,6 +426,7 @@ const deck = [
     description: "",
     pair_id: 6,
     value: 10,
+    points: 0,
     singleRank: 5,
     pairRank: 6,
     special: false,
@@ -408,6 +441,7 @@ const deck = [
     description: "",
     pair_id: 6,
     value: 10,
+    points: 0,
     singleRank: 5,
     pairRank: 6,
     special: false,
@@ -422,6 +456,7 @@ const deck = [
     description: "",
     pair_id: 7,
     value: 6,
+    points: 6,
     singleRank: 6,
     pairRank: 7,
     special: false,
@@ -436,6 +471,7 @@ const deck = [
     description: "",
     pair_id: 7,
     value: 6,
+    points: 6,
     singleRank: 6,
     pairRank: 7,
     special: false,
@@ -450,6 +486,7 @@ const deck = [
     description: "",
     pair_id: 8,
     value: 4,
+    points: 4,
     singleRank: 7,
     pairRank: 8,
     special: false,
@@ -464,6 +501,7 @@ const deck = [
     description: "",
     pair_id: 8,
     value: 4,
+    points: 4,
     singleRank: 7,
     pairRank: 8,
     special: false,
@@ -478,6 +516,7 @@ const deck = [
     description: "",
     pair_id: 9,
     value: 11,
+    points: 1,
     singleRank: 8,
     pairRank: 9,
     special: false,
@@ -492,6 +531,7 @@ const deck = [
     description: "",
     pair_id: 9,
     value: 11,
+    points: 1,
     singleRank: 8,
     pairRank: 9,
     special: false,
@@ -506,6 +546,7 @@ const deck = [
     description: "",
     pair_id: 10,
     value: 10,
+    points: 0,
     singleRank: 9,
     pairRank: 10,
     special: false,
@@ -520,6 +561,7 @@ const deck = [
     description: "",
     pair_id: 10,
     value: 10,
+    points: 0,
     singleRank: 9,
     pairRank: 10,
     special: false,
@@ -534,6 +576,7 @@ const deck = [
     description: "Mathced Seven",
     pair_id: 11,
     value: 7,
+    points: 7,
     singleRank: 10,
     pairRank: 11,
     special: false,
@@ -548,6 +591,7 @@ const deck = [
     description: "Mathced Seven",
     pair_id: 11,
     value: 7,
+    points: 7,
     singleRank: 10,
     pairRank: 11,
     special: false,
@@ -561,6 +605,7 @@ const deck = [
     translation: "Six",
     description: "Mathced Six",
     pair_id: 12,
+    points: 6,
     value: 6,
     singleRank: 11,
     pairRank: 12,
@@ -576,6 +621,7 @@ const deck = [
     description: "Mathced Six",
     pair_id: 12,
     value: 6,
+    points: 6,
     singleRank: 11,
     pairRank: 12,
     special: false,
@@ -590,6 +636,7 @@ const deck = [
     description: "6 + 3 Nine",
     pair_id: 13,
     value: 9,
+    points: 9,
     singleRank: 12,
     pairRank: 13,
     special: false,
@@ -604,6 +651,7 @@ const deck = [
     pair_id: 13,
     translation: "Nine",
     value: 9,
+    points: 9,
     singleRank: 12,
     pairRank: 13,
     special: false,
@@ -618,6 +666,7 @@ const deck = [
     translation: "Eight",
     pair_id: 14,
     value: 8,
+    points: 8,
     singleRank: 13,
     pairRank: 14,
     special: false,
@@ -632,6 +681,7 @@ const deck = [
     translation: "Eight",
     pair_id: 14,
     value: 8,
+    points: 8,
     singleRank: 13,
     pairRank: 14,
     special: false,
@@ -646,6 +696,7 @@ const deck = [
     translation: "Seven",
     pair_id: 15,
     value: 7,
+    points: 7,
     singleRank: 14,
     pairRank: 15,
     special: false,
@@ -660,6 +711,7 @@ const deck = [
     translation: "Seven",
     pair_id: 15,
     value: 7,
+    points: 7,
     singleRank: 14,
     pairRank: 15,
     special: false,
@@ -674,6 +726,7 @@ const deck = [
     translation: "Five",
     pair_id: 16,
     value: 5,
+    points: 5,
     singleRank: 15,
     pairRank: 16,
     special: false,
@@ -688,6 +741,7 @@ const deck = [
     translation: "Five",
     pair_id: 16,
     value: 5,
+    points: 5,
     singleRank: 15,
     pairRank: 16,
     special: false,
@@ -702,6 +756,7 @@ const deck = [
     translation: "Joker ",
     pair_id: 1,
     value: 3 || 6,
+    points: 3 || 6,
     singleRank: 16,
     pairRank: 1,
     special: false,
@@ -716,6 +771,7 @@ const deck = [
     translation: "Joker ",
     pair_id: 1,
     value: 3 || 6,
+    points: 3 || 6,
     singleRank: 16,
     pairRank: 1,
     special: false,
