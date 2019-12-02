@@ -1,20 +1,35 @@
 function testStuff(num) {
-  let handOf4 = [];
-  for (let i = 0; i < num; i++) {
-    let newDeck = shuffleDeck(deck).slice();
-    for (let j = 0; j < 4; j++) {
-      const index = Math.floor(Math.random() * newDeck.length);
-      const tile = newDeck.splice(index, 1)[0];
-      handOf4.push(tile);
-    }
-  }
-  //   let handOf4 = [deck[0], deck[1], deck[6], deck[10]];
+  //   let handOf4 = [];
+  //   for (let i = 0; i < num; i++) {
+  //     let newDeck = shuffleDeck(deck).slice();
+  //     for (let j = 0; j < 4; j++) {
+  //       const index = Math.floor(Math.random() * newDeck.length);
+  //       const tile = newDeck.splice(index, 1)[0];
+  //       handOf4.push(tile);
+  //     }
+  //   }
+  let handOf4 = [deck[0], deck[1], deck[5], deck[22]];
+
   const result = houseWay(handOf4);
   const reverseResult = [...result].reverse();
   const pointValue = [];
   if (result[1][0].pair_id === result[1][1].pair_id) {
     pointValue.push([(result[0][0].value + result[0][1].value) % 10]);
     pointValue.push(["pair"]);
+  } else if (
+    result[1][0].value === 2 &&
+    result[1][0].special &&
+    result[1][1].value === 9
+  ) {
+    pointValue.push([(result[0][0].value + result[0][1].value) % 10]);
+    pointValue.push(["Wong"]);
+  } else if (
+    result[1][0].value === 2 &&
+    result[1][0].special &&
+    result[1][1].value === 8
+  ) {
+    pointValue.push([(result[0][0].value + result[0][1].value) % 10]);
+    pointValue.push(["Gong"]);
   } else {
     result.forEach(hand => {
       pointValue.push((hand[0].value + hand[1].value) % 10);
@@ -83,10 +98,11 @@ const houseWay = handOf4 => {
     );
     let pairValue = deck.find(tile => tile.pair_id === pairId).value;
     console.log(pairValue);
+
     const other2Tiles = sortedAscendingHand
       .slice()
       .filter(tile => tile.pair_id !== pairId)
-      .sort();
+      .sort((a, b) => a.value - b.value);
 
     const pairInThisHand = sortedAscendingHand
       .slice()
@@ -137,6 +153,14 @@ const houseWay = handOf4 => {
           break;
         } else if (way3Value[0] >= 6 && way3Value[1] >= 8) {
           finalHand = [...way3];
+          break;
+        } else if (other2Tiles[0].value == 9 && other2Tiles[1].value === 11) {
+          lowHand.push(pairInThisHand[0]);
+          highHand.push(pairInThisHand[1]);
+          lowHand.push(other2Tiles[1]);
+          highHand.push(other2Tiles[0]);
+          finalHand.push(lowHand);
+          finalHand.push(highHand);
           break;
         } else {
           lowHand = [...other2Tiles];
@@ -235,7 +259,7 @@ const houseWay = handOf4 => {
         return "error";
     }
     return finalHand;
-  } else {
+  } else if (Object.values(sortedHandResult).length === 4) {
     console.log("No pair");
     lowHand.push(sortedAscendingHand[0]);
     lowHand.push(sortedAscendingHand[1]);
