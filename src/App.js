@@ -5,7 +5,6 @@ import { houseWay } from "./helpers/houseWay.js";
 class App extends Component {
   state = {
     deck: shuffleDeck(deck),
-    // deck: deck,
     handOf4: [],
     houseWayHand: []
   };

@@ -1,4 +1,4 @@
-function testStuff(num) {
+function testStuff() {
   //   let handOf4 = [];
   //   for (let i = 0; i < num; i++) {
   //     let newDeck = shuffleDeck(deck).slice();
